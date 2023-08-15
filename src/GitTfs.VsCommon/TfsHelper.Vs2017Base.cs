@@ -96,7 +96,8 @@ namespace GitTfs.VsCommon
             Trace.WriteLine("LocalSettings        :" + myExternalSettingsManager.GetApplicationDataFolder(ApplicationDataFolder.LocalSettings));
             Trace.WriteLine("RoamingSettings      :" + myExternalSettingsManager.GetApplicationDataFolder(ApplicationDataFolder.RoamingSettings));
             Trace.WriteLine("UserExtensions       :" + myExternalSettingsManager.GetApplicationDataFolder(ApplicationDataFolder.UserExtensions));
-            foreach (string searchPath in myExternalSettingsManager.GetCommonExtensionsSearchPaths()) {
+            foreach (string searchPath in myExternalSettingsManager.GetCommonExtensionsSearchPaths())
+            {
                 Trace.WriteLine("CommonExtensionsPath :" + searchPath);
             }
 
@@ -187,9 +188,17 @@ namespace GitTfs.VsCommon
 
         protected override TfsTeamProjectCollection GetTfsCredential(Uri uri)
         {
+            string pat = Environment.GetEnvironmentVariable("GITTFS_PAT");
+            if (pat != null)
+            {
+                vssCred = new VssBasicCredential(string.Empty, pat);
+            }
+            
             var vssCred = HasCredentials
                 ? new VssClientCredentials(new WindowsCredential(GetCredential()))
                 : VssClientCredentials.LoadCachedCredentials(uri, false, CredentialPromptType.PromptIfNeeded);
+
+
 
             return new TfsTeamProjectCollection(uri, vssCred);
 #pragma warning restore 618
