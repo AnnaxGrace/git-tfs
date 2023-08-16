@@ -20,6 +20,10 @@
     <ProjectReference Include="..\GitTfs.VsFake\GitTfs.VsFake.csproj" />
     <ProjectReference Include="..\GitTfs\GitTfs.csproj" />
   </ItemGroup>
+<ItemGroup>
+  <PackageReference Include="Microsoft.Build" Version="15.1.548" ExcludeAssets="runtime" />
+  <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.1.548" ExcludeAssets="runtime" />
+</ItemGroup>
   <ItemGroup>
     <Reference Include="xunit.runner.visualstudio.testadapter, Version=2.1.0.1129, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
