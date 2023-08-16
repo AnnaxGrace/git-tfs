@@ -39,6 +39,10 @@
   <ItemGroup>
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
+<ItemGroup>
+  <PackageReference Include="Microsoft.Build" Version="15.1.548" ExcludeAssets="runtime" />
+  <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.1.548" ExcludeAssets="runtime" />
+</ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="xcopy /y /I &quot;$(TargetDir)*.dll&quot; &quot;$(SolutionDir)GitTfs\$(OutDir)$(ProjectName)&quot; /EXCLUDE:..\build\files_to_ignore_during_post_build_copy.txt" />
     <Exec Command="xcopy /y /I &quot;$(TargetDir)*.pdb&quot; &quot;$(SolutionDir)GitTfs\$(OutDir)$(ProjectName)&quot; /EXCLUDE:..\build\files_to_ignore_during_post_build_copy.txt" />
