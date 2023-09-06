@@ -295,24 +295,24 @@ Task("Run-Unit-Tests").Description("Run the unit tests")
 Task("Run-Smoke-Tests").Description("Run the functional/smoke tests")
 	.IsDependentOn("Run-Unit-Tests")
 	.Does(() =>
-// {
-// 	var tmpDirectory = System.IO.Path.Combine(EnvironmentVariable("TMP"), "gittfs");
-// 	EnsureDirectoryExists(tmpDirectory);
-// 	CleanDirectory(tmpDirectory);
+{
+	var tmpDirectory = System.IO.Path.Combine(EnvironmentVariable("TMP"), "gittfs");
+	EnsureDirectoryExists(tmpDirectory);
+	CleanDirectory(tmpDirectory);
 
-// 	var aboluteBuildDir = MakeAbsolute(Directory(buildDir));
-// 	var absoluteSmokeTestsScript = MakeAbsolute(File(@".\build\FunctionalTesting\smoke_tests.ps1"));
+	var aboluteBuildDir = MakeAbsolute(Directory(buildDir));
+	var absoluteSmokeTestsScript = MakeAbsolute(File(@".\build\FunctionalTesting\smoke_tests.ps1"));
 
-// 	var exitCode = StartProcess("powershell.exe", new ProcessSettings
-// 		{
-// 			Arguments = "-file \""+ absoluteSmokeTestsScript +"\" -gittfsFolder \""+ aboluteBuildDir + "\"",
-// 			WorkingDirectory = tmpDirectory
-// 		});
-// 	if(exitCode != 0)
-// 	{
-// 		throw new Exception("Fail to run the smoke tests");
-// 	}
-// });
+	var exitCode = StartProcess("powershell.exe", new ProcessSettings
+		{
+			Arguments = "-file \""+ absoluteSmokeTestsScript +"\" -gittfsFolder \""+ aboluteBuildDir + "\"",
+			WorkingDirectory = tmpDirectory
+		});
+	if(exitCode != 0)
+	{
+		throw new Exception("Fail to run the smoke tests");
+	}
+});
 
 Task("Package").Description("Generate the release zip file")
 	.IsDependentOn("Build")
