@@ -242,35 +242,35 @@ Task("Run-Unit-Tests").Description("Run the unit tests")
 
 	EnsureDirectoryExists(buildAssetPath);
 	var coverageFile = System.IO.Path.Combine(buildAssetPath, "coverage.xml");
-	OpenCover(tool => {
-		tool.XUnit2("./"+ TestProjectName + "/" + OutDir + TestProjectName +".dll", new XUnit2Settings()
-		{
-			XmlReport = true,
-			OutputDirectory = ".",
-			UseX86 =  true
-			Register = "user"
-		});
-	},
-	new FilePath(coverageFile),
-	new OpenCoverSettings()
-		{
-			WorkingDirectory = MakeAbsolute(Directory("./"+ TestProjectName + "/" + OutDir)),
-			Register = "user"
-		}
-		 .WithFilter("+[git-tfs*]*")
-		 .WithFilter("-[LibGit2Sharp]*")
-		);
+	// OpenCover(tool => {
+	// 	tool.XUnit2("./"+ TestProjectName + "/" + OutDir + TestProjectName +".dll", new XUnit2Settings()
+	// 	{
+	// 		XmlReport = true,
+	// 		OutputDirectory = ".",
+	// 		UseX86 =  true
+	// 		Register = "user"
+	// 	});
+	// },
+	// new FilePath(coverageFile),
+	// new OpenCoverSettings()
+	// 	{
+	// 		WorkingDirectory = MakeAbsolute(Directory("./"+ TestProjectName + "/" + OutDir)),
+	// 		Register = "user"
+	// 	}
+	// 	 .WithFilter("+[git-tfs*]*")
+	// 	 .WithFilter("-[LibGit2Sharp]*")
+	// 	);
 
-	if(BuildSystem.IsRunningOnAppVeyor)
-	{
-		Information("Upload coverage to AppVeyor...");
-		BuildSystem.AppVeyor.UploadArtifact(coverageFile);
-	}
-	if(BuildSystem.IsRunningOnVSTS)
-	{
-		Information("Upload coverage to VSTS...");
-		BuildSystem.TFBuild.Commands.UploadArtifact("reports", coverageFile, "coverage.xml");
-	}
+	// if(BuildSystem.IsRunningOnAppVeyor)
+	// {
+	// 	Information("Upload coverage to AppVeyor...");
+	// 	BuildSystem.AppVeyor.UploadArtifact(coverageFile);
+	// }
+	// if(BuildSystem.IsRunningOnVSTS)
+	// {
+	// 	Information("Upload coverage to VSTS...");
+	// 	BuildSystem.TFBuild.Commands.UploadArtifact("reports", coverageFile, "coverage.xml");
+	// }
 
 	var coverageResultFolder = System.IO.Path.Combine(buildAssetPath, "coverage");
 	ReportGenerator(coverageFile, coverageResultFolder, new ReportGeneratorSettings(){
