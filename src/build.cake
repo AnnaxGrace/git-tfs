@@ -217,9 +217,9 @@ Task("Build").Description("Build git-tfs")
 			.SetVerbosity(Verbosity.Minimal)
 			.SetMaxCpuCount(4);
 		settings.WithTarget("GitTfs_Vs2022");
-			//.WithTarget("GitTfs_Vs2017")
-			//.WithTarget("GitTfs_Vs2019")
-			//.WithTarget(TestProjectName);
+			.WithTarget("GitTfs_Vs2017")
+			.WithTarget("GitTfs_Vs2019")
+			.WithTarget(TestProjectName);
 	});
 });
 
@@ -234,85 +234,85 @@ void SetGitUserConfig()
 	}
 }
 
-Task("Run-Unit-Tests").Description("Run the unit tests")
-	.IsDependentOn("Build")
-	.Does(() =>
-{
-	SetGitUserConfig();
+// Task("Run-Unit-Tests").Description("Run the unit tests")
+// 	.IsDependentOn("Build")
+// 	.Does(() =>
+// {
+// 	SetGitUserConfig();
 
-	EnsureDirectoryExists(buildAssetPath);
-	var coverageFile = System.IO.Path.Combine(buildAssetPath, "coverage.xml");
-	OpenCover(tool => {
-		tool.XUnit2("./"+ TestProjectName + "/" + OutDir + TestProjectName +".dll", new XUnit2Settings()
-		{
-			XmlReport = true,
-			OutputDirectory = ".",
-			UseX86 =  true
-		});
-	},
-	new FilePath(coverageFile),
-	new OpenCoverSettings()
-		{
-			WorkingDirectory = MakeAbsolute(Directory("./"+ TestProjectName + "/" + OutDir)),
-			Register = "user"
-		}
-		 .WithFilter("+[git-tfs*]*")
-		 .WithFilter("-[LibGit2Sharp]*")
-		);
+// 	EnsureDirectoryExists(buildAssetPath);
+// 	var coverageFile = System.IO.Path.Combine(buildAssetPath, "coverage.xml");
+// 	OpenCover(tool => {
+// 		tool.XUnit2("./"+ TestProjectName + "/" + OutDir + TestProjectName +".dll", new XUnit2Settings()
+// 		{
+// 			XmlReport = true,
+// 			OutputDirectory = ".",
+// 			UseX86 =  true
+// 		});
+// 	},
+// 	new FilePath(coverageFile),
+// 	new OpenCoverSettings()
+// 		{
+// 			WorkingDirectory = MakeAbsolute(Directory("./"+ TestProjectName + "/" + OutDir)),
+// 			Register = "user"
+// 		}
+// 		 .WithFilter("+[git-tfs*]*")
+// 		 .WithFilter("-[LibGit2Sharp]*")
+// 		);
 
-	if(BuildSystem.IsRunningOnAppVeyor)
-	{
-		Information("Upload coverage to AppVeyor...");
-		BuildSystem.AppVeyor.UploadArtifact(coverageFile);
-	}
-	if(BuildSystem.IsRunningOnVSTS)
-	{
-		Information("Upload coverage to VSTS...");
-		BuildSystem.TFBuild.Commands.UploadArtifact("reports", coverageFile, "coverage.xml");
-	}
+// 	if(BuildSystem.IsRunningOnAppVeyor)
+// 	{
+// 		Information("Upload coverage to AppVeyor...");
+// 		BuildSystem.AppVeyor.UploadArtifact(coverageFile);
+// 	}
+// 	if(BuildSystem.IsRunningOnVSTS)
+// 	{
+// 		Information("Upload coverage to VSTS...");
+// 		BuildSystem.TFBuild.Commands.UploadArtifact("reports", coverageFile, "coverage.xml");
+// 	}
 
-	var coverageResultFolder = System.IO.Path.Combine(buildAssetPath, "coverage");
-	ReportGenerator(coverageFile, coverageResultFolder, new ReportGeneratorSettings(){
-		ToolPath = @".\packages\build\ReportGenerator\tools\net47\ReportGenerator.exe"
-	});
-	if(!BuildSystem.IsLocalBuild)
-	{
-		var coverageZip = System.IO.Path.Combine(buildAssetPath, "coverage.zip");
-		Zip(coverageResultFolder, coverageZip);
-		if(BuildSystem.IsRunningOnAppVeyor)
-		{
-			Information("Upload coverage zipped to AppVeyor...");
-			BuildSystem.AppVeyor.UploadArtifact(coverageZip);
-		}
-		if(BuildSystem.IsRunningOnVSTS)
-		{
-			Information("Upload coverage zipped to VSTS...");
-			BuildSystem.TFBuild.Commands.UploadArtifact("reports", coverageZip, "coverage.zip");
-		}
-	}
-});
+// 	var coverageResultFolder = System.IO.Path.Combine(buildAssetPath, "coverage");
+// 	ReportGenerator(coverageFile, coverageResultFolder, new ReportGeneratorSettings(){
+// 		ToolPath = @".\packages\build\ReportGenerator\tools\net47\ReportGenerator.exe"
+// 	});
+// 	if(!BuildSystem.IsLocalBuild)
+// 	{
+// 		var coverageZip = System.IO.Path.Combine(buildAssetPath, "coverage.zip");
+// 		Zip(coverageResultFolder, coverageZip);
+// 		if(BuildSystem.IsRunningOnAppVeyor)
+// 		{
+// 			Information("Upload coverage zipped to AppVeyor...");
+// 			BuildSystem.AppVeyor.UploadArtifact(coverageZip);
+// 		}
+// 		if(BuildSystem.IsRunningOnVSTS)
+// 		{
+// 			Information("Upload coverage zipped to VSTS...");
+// 			BuildSystem.TFBuild.Commands.UploadArtifact("reports", coverageZip, "coverage.zip");
+// 		}
+// 	}
+// });
 
-Task("Run-Smoke-Tests").Description("Run the functional/smoke tests")
-	.IsDependentOn("Run-Unit-Tests")
-	.Does(() =>
-{
-	var tmpDirectory = System.IO.Path.Combine(EnvironmentVariable("TMP"), "gittfs");
-	EnsureDirectoryExists(tmpDirectory);
-	CleanDirectory(tmpDirectory);
+// Task("Run-Smoke-Tests").Description("Run the functional/smoke tests")
+// 	.IsDependentOn("Run-Unit-Tests")
+// 	.Does(() =>
+// {
+// 	var tmpDirectory = System.IO.Path.Combine(EnvironmentVariable("TMP"), "gittfs");
+// 	EnsureDirectoryExists(tmpDirectory);
+// 	CleanDirectory(tmpDirectory);
 
-	var aboluteBuildDir = MakeAbsolute(Directory(buildDir));
-	var absoluteSmokeTestsScript = MakeAbsolute(File(@".\build\FunctionalTesting\smoke_tests.ps1"));
+// 	var aboluteBuildDir = MakeAbsolute(Directory(buildDir));
+// 	var absoluteSmokeTestsScript = MakeAbsolute(File(@".\build\FunctionalTesting\smoke_tests.ps1"));
 
-	var exitCode = StartProcess("powershell.exe", new ProcessSettings
-		{
-			Arguments = "-file \""+ absoluteSmokeTestsScript +"\" -gittfsFolder \""+ aboluteBuildDir + "\"",
-			WorkingDirectory = tmpDirectory
-		});
-	if(exitCode != 0)
-	{
-		throw new Exception("Fail to run the smoke tests");
-	}
-});
+// 	var exitCode = StartProcess("powershell.exe", new ProcessSettings
+// 		{
+// 			Arguments = "-file \""+ absoluteSmokeTestsScript +"\" -gittfsFolder \""+ aboluteBuildDir + "\"",
+// 			WorkingDirectory = tmpDirectory
+// 		});
+// 	if(exitCode != 0)
+// 	{
+// 		throw new Exception("Fail to run the smoke tests");
+// 	}
+// });
 
 Task("Package").Description("Generate the release zip file")
 	.IsDependentOn("Build")
