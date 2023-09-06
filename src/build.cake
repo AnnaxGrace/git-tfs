@@ -248,13 +248,14 @@ Task("Run-Unit-Tests").Description("Run the unit tests")
 			XmlReport = true,
 			OutputDirectory = ".",
 			UseX86 =  true
+			Register = "user"
 		});
 	},
 	new FilePath(coverageFile),
 	new OpenCoverSettings()
 		{
 			WorkingDirectory = MakeAbsolute(Directory("./"+ TestProjectName + "/" + OutDir)),
-			Register = "path32"
+			Register = "user"
 		}
 		 .WithFilter("+[git-tfs*]*")
 		 .WithFilter("-[LibGit2Sharp]*")
