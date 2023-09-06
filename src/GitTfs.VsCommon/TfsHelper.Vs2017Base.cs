@@ -186,19 +186,18 @@ namespace GitTfs.VsCommon
             return _bridge.Wrap<WrapperForIdentity, Identity>(Retry.Do(() => GroupSecurityService.ReadIdentity(SearchFactor.AccountName, username, QueryMembership.None)));
         }
 
-        protected override TfsTeamProjectCollection GetTfsCredential(Uri uri)
+       protected override TfsTeamProjectCollection GetTfsCredential(Uri uri)
         {
+            var vssCred = HasCredentials
+                ? new VssClientCredentials(new WindowsCredential(GetCredential()))
+                : VssClientCredentials.LoadCachedCredentials(uri, false, CredentialPromptType.PromptIfNeeded);
+
+            
             string pat = Environment.GetEnvironmentVariable("GITTFS_PAT");
             if (pat != null)
             {
                 vssCred = new VssBasicCredential(string.Empty, pat);
             }
-            
-            var vssCred = HasCredentials
-                ? new VssClientCredentials(new WindowsCredential(GetCredential()))
-                : VssClientCredentials.LoadCachedCredentials(uri, false, CredentialPromptType.PromptIfNeeded);
-
-
 
             return new TfsTeamProjectCollection(uri, vssCred);
 #pragma warning restore 618
