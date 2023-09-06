@@ -251,14 +251,14 @@ Task("Run-Unit-Tests").Description("Run the unit tests")
 		});
 	},
 	new FilePath(coverageFile),
-	// new OpenCoverSettings()
-	// 	{
-	// 		WorkingDirectory = MakeAbsolute(Directory("./"+ TestProjectName + "/" + OutDir)),
-	// 		Register = "user"
-	// 	}
-	// 	 .WithFilter("+[git-tfs*]*")
-	// 	 .WithFilter("-[LibGit2Sharp]*")
-	// 	);
+	new OpenCoverSettings()
+		{
+			WorkingDirectory = MakeAbsolute(Directory("./"+ TestProjectName + "/" + OutDir)),
+			Register = "path32"
+		}
+		 .WithFilter("+[git-tfs*]*")
+		 .WithFilter("-[LibGit2Sharp]*")
+		);
 
 	if(BuildSystem.IsRunningOnAppVeyor)
 	{
